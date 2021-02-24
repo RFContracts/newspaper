@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: 123456pass
+      POSTGRES_USER: newspaper_user
+      POSTGRES_DB: newspaper
+    ports:
+      - 127.0.0.1:5433:5432
+    volumes:
+      - pg:/var/lib/postgresql/data/
+
+  app:
+    build: .
+    container_name: newspaper_app
+    restart: unless-stopped
+    depends_on:
+      - db
+    working_dir: /var/www/
+    command: sh -c 'ls -la && sh run.sh'
+    ports:
+      - 127.0.0.1:8000:8000
+    volumes:
+      - ./:/var/www
+
+volumes:
+  pg:
